@@ -3,6 +3,6 @@ Rails.application.routes.draw do
   get 'artists/:id_artist', to: 'artists#show', as: 'artist_show'
   post 'artists', to: 'artists#create', as: 'artist_create'
   
-  root to: 'artists'
+  root to: 'artists#index'
 
 end
