@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  username: postgres
+  password: hola123
+  pool: 5
+
+production:
+  <<: *default
+  database: api_ti_production
+
+development:
+  <<: *default
+  database: api_ti_development
+
+test:
+  <<: *default
+  database: api_ti_test
