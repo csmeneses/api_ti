@@ -1,5 +1,9 @@
 class ArtistsController < ApplicationController
   @@base_url = 'https://polar-tundra-13798.herokuapp.com'
+  
+  def home
+  end
+  
   def index
     @artists = Artist.all
     response = []

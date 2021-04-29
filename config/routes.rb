@@ -21,5 +21,5 @@ Rails.application.routes.draw do
   delete 'tracks/:id_track', to: 'tracks#delete', constraints: { id_track: /[^\/]+/ }
   put 'tracks/:id_track/play', to: 'tracks#play', constraints: { id_track: /[^\/]+/ }
   
-  root to: 'artists#index'
+  root to: 'artists#home'
 end
