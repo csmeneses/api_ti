@@ -1,5 +1,5 @@
 class ArtistsController < ApplicationController
-  @@base_url = 'LINKLINKLINK'
+  @@base_url = 'https://polar-tundra-13798.herokuapp.com'
   def index
     @artists = Artist.all
     response = []
