@@ -25,7 +25,7 @@ class AlbumsController < ApplicationController
     id_artist = params[:id_artist]
     album_params = params.require(:album).permit(:name, :genre)
     enc = Base64.encode64("#{album_params[:name]}:#{id_artist}")
-    album_params[:id_album] = enc.gsub("\n", '').truncate(22)
+    album_params[:id_album] = enc.gsub("\n", '').truncate(22, omission: '')
 
     # Revisar si existe artist
     artist_ok = true
@@ -60,6 +60,44 @@ class AlbumsController < ApplicationController
     if !@album.empty?
       @album[0].destroy
       render json: { "success": 'album deleted' }, status: :no_content
+    else
+      render json: { "error": 'album not found' }, status: :not_found
+    end
+  end
+
+  def tracks
+    id_album = params[:id_album]
+    album_ok = true
+    @album = Album.where(id_album: id_album)
+    if @album.empty?
+      album_ok = false
+    end
+
+    if album_ok
+      @album = @album[0]
+      @tracks = @album.tracks
+      response = []
+      @tracks.each do |track|
+        response << track.generate_response(@@base_url)
+      end
+      render json: response, status: :ok
+    else
+      render json: { "error": 'album not found' }, status: :not_found
+    end
+  end
+
+  def play
+    id_album = params[:id_album]
+    @album = Album.where(id_album: id_album)
+    album_ok = true
+    if @album.empty?
+      album_ok = false
+    end
+
+    if album_ok
+      @album = @album[0]
+      @album.listen
+      render json: { "success": 'album played' }, status: :ok
     else
       render json: { "error": 'album not found' }, status: :not_found
     end

@@ -26,7 +26,7 @@ class TracksController < ApplicationController
     track_params = params.require(:track).permit(:name, :duration)
     track_params[:times_played] = 0
     enc = Base64.encode64("#{track_params[:name]}:#{id_album}")
-    track_params[:id_track] = enc.gsub("\n", '').truncate(22)
+    track_params[:id_track] = enc.gsub("\n", '').truncate(22, omission: '')
 
     # Revisar si existe album
     album_ok = true
@@ -61,6 +61,23 @@ class TracksController < ApplicationController
     if !@track.empty?
       @track[0].destroy
       render json: { "success": 'track deleted' }, status: :no_content
+    else
+      render json: { "error": 'track not found' }, status: :not_found
+    end
+  end
+
+  def play
+    id_track = params[:id_track]
+    @track = Track.where(id_track: id_track)
+    track_ok = true
+    if @track.empty?
+      track_ok = false
+    end
+
+    if track_ok
+      @track = @track[0]
+      @track.listen
+      render json: { "success": 'track played' }, status: :ok
     else
       render json: { "error": 'track not found' }, status: :not_found
     end

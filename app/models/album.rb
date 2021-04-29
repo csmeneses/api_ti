@@ -13,4 +13,9 @@ class Album < ApplicationRecord
     response
   end
 
+  def listen
+    tracks.each do |track|
+      track.listen
+    end
+  end
 end

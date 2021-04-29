@@ -11,4 +11,10 @@ class Artist < ApplicationRecord
     }
     response
   end
+
+  def listen
+    albums.each do |album|
+      album.listen
+    end
+  end
 end

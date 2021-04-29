@@ -12,4 +12,9 @@ class Track < ApplicationRecord
     }
     response
   end
+
+  def listen
+    track_params = { times_played: times_played + 1 }
+    update(track_params)
+  end
 end
