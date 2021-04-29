@@ -24,34 +24,52 @@ class TracksController < ApplicationController
   def create
     id_album = params[:id_album]
     track_params = params.require(:track).permit(:name, :duration)
-    track_params[:times_played] = 0
-    enc = Base64.encode64("#{track_params[:name]}:#{id_album}")
-    track_params[:id_track] = enc.gsub("\n", '').truncate(22, omission: '')
-
-    # Revisar si existe album
-    album_ok = true
-    album = Album.where(id_album: id_album)
-    if album.empty?
-      album_ok = false
+    
+    # Verificar input
+    input_ok = true
+    if !track_params.keys.include? 'name'
+      input_ok = false
+    elsif !track_params[:name].is_a?(String)
+      input_ok = false
     end
-
-    # Revisar si existe track
-    no_conflict = true
-    existing_track = Track.where(id_track: track_params[:id_track])
-    if !existing_track.empty?
-      no_conflict = false
+    if !track_params.keys.include? 'duration'
+      input_ok = false
+    elsif !track_params[:duration].is_a?(Float)
+      input_ok = false
     end
+    
+    if input_ok
+      track_params[:times_played] = 0
+      enc = Base64.encode64("#{track_params[:name]}:#{id_album}")
+      track_params[:id_track] = enc.gsub("\n", '').truncate(22, omission: '')
 
-    if album_ok && no_conflict
-      @track = Track.new(track_params)
-      @track.save
-      album[0].tracks << @track
-      render json: @track.generate_response(@@base_url), status: :created
-    elsif !album_ok
-      render json: { "error": 'album does not exist' }, status: :unprocessable_entity
-    elsif !no_conflict
-      @track = existing_track[0]
-      render json: @track.generate_response(@@base_url), status: :conflict
+      # Revisar si existe album
+      album_ok = true
+      album = Album.where(id_album: id_album)
+      if album.empty?
+        album_ok = false
+      end
+
+      # Revisar si existe track
+      no_conflict = true
+      existing_track = Track.where(id_track: track_params[:id_track])
+      if !existing_track.empty?
+        no_conflict = false
+      end
+
+      if album_ok && no_conflict
+        @track = Track.new(track_params)
+        @track.save
+        album[0].tracks << @track
+        render json: @track.generate_response(@@base_url), status: :created
+      elsif !album_ok
+        render json: { "error": 'album does not exist' }, status: :unprocessable_entity
+      elsif !no_conflict
+        @track = existing_track[0]
+        render json: @track.generate_response(@@base_url), status: :conflict
+      end
+    else
+      render json: { "error": 'bad request' }, status: :bad_request
     end
   end
 
