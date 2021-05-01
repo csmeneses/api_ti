@@ -136,4 +136,8 @@ class ArtistsController < ApplicationController
       render json: { "error": 'artist not found' }, status: :not_found
     end
   end
+
+  def error
+    render json: { "error": 'method not allowed' }, status: :method_not_allowed
+  end
 end

@@ -120,4 +120,7 @@ class AlbumsController < ApplicationController
       render json: { "error": 'album not found' }, status: :not_found
     end
   end
+  def error
+    render json: { "error": 'method not allowed' }, status: :method_not_allowed
+  end
 end

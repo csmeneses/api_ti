@@ -100,4 +100,7 @@ class TracksController < ApplicationController
       render json: { "error": 'track not found' }, status: :not_found
     end
   end
+  def error
+    render json: { "error": 'method not allowed' }, status: :method_not_allowed
+  end
 end
